@@ -95,8 +95,8 @@ void Terrain::Update(float dt)
 {
 	if (animated)
 	{
-		terrainBufferData.xOff += 0.01 * dt;
-		terrainBufferData.zOff += 0.01 * dt;
+		terrainBufferData.xOff += 0.001 * dt;
+		terrainBufferData.zOff += 0.001 * dt;
 	}
 }
 
