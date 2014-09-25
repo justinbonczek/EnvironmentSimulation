@@ -8,6 +8,7 @@
 #include "Vertex.h"
 #include "XColors.h"
 #include "Terrain.h"
+#include "Timer.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int showCmd)
 {
@@ -86,16 +87,27 @@ void Simulation::LoadAssets()
 	diffuse->LoadShader(L"DefaultVert.cso", Vert, dev);
 	diffuse->LoadShader(L"DefaultPixel.cso", Pixel, dev);
 
-	Material* heightmap = new Material(L"Textures/grass.png", wrapSampler, dev);
+	Material* heightmap = new Material(L"Textures/default.png", wrapSampler, dev);
 	heightmap->LoadShader(L"Heightmap.cso", Vert, dev);
 	heightmap->LoadShader(L"TexturedDiffuse.cso", Pixel, dev);
 
+	Material* waterMat = new Material(L"Textures/water.png", wrapSampler, dev);
+	waterMat->LoadShader(L"Heightmap.cso", Vert, dev);
+	waterMat->LoadShader(L"TexturedDiffuse.cso", Pixel, dev);
+
 	GameObject* obj = new GameObject(new Mesh("Models/chess.fbx", dev), diffuse);
-	objects.push_back(obj);
+	//objects.push_back(obj);
 
 	Terrain* terrain = new Terrain(500.0f, 500.0f, 500, 500, heightmap, L"Textures/heightmap.png", dev);
-	terrain->LoadNormalMap(L"Textures/normalmap.png", dev);
+	terrain->LoadNormalMap(L"Textures/normalmap2.png", dev);
+	terrain->SetBufferData(100.0, dev);
 	objects.push_back(terrain);
+
+	Terrain* water = new Terrain(500.0f, 500.0f, 500, 500, waterMat, L"Textures/waterHeightMap.png", dev);
+	water->LoadNormalMap(L"Textures/waterNormalMap.png", dev);
+	water->SetBufferData(5.0, 0.0, 0.0, dev);
+	water->SetPosition(XMFLOAT3(0, 27.0, 0));
+	objects.push_back(water);
 }
 
 void Simulation::InitializePipeline()
@@ -146,7 +158,7 @@ void Simulation::OnResize()
 {
 	Game::OnResize();
 
-	m_Camera.SetLens(0.25f * 3.1415926535f, AspectRatio(), 0.1f, 100.0f);
+	m_Camera.SetLens(0.25f * 3.1415926535f, AspectRatio(), 0.1f, 200.0f);
 	XMStoreFloat4x4(&(matrixBufferData.projection), XMMatrixTranspose(m_Camera.Proj()));
 }
 
@@ -166,7 +178,7 @@ void Simulation::Draw()
 
 	XMStoreFloat4x4(&(matrixBufferData.view), XMMatrixTranspose(m_Camera.View()));
 	
-	const float clearColor[4] = { 0.4f, 0.6, 0.75f, 0.0f };
+	const float clearColor[4] = { 0.0f, 0.0, 0.0f, 1.0f };
 
 	devCon->ClearRenderTargetView(renderTargetView, clearColor);
 	devCon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);

@@ -1,3 +1,10 @@
+cbuffer terrain : register(b1)
+{
+	float maxHeight;
+	float xOff;
+	float zOff;
+};
+
 struct VertexToPixel
 {
 	float4 position		: SV_POSITION;
@@ -11,5 +18,6 @@ SamplerState _Sampler : register(s0);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	return lerp(input.color.rgb, _Texture.Sample(_Sampler, input.uv));
+	//return _Texture.Sample(_Sampler, float2(input.uv.x + xOff, input.uv.y + zOff));
+	return float4((input.color.rgb + _Texture.Sample(_Sampler, float2(input.uv.x + xOff, input.uv.y + zOff) * 50.0).rgb) / 2.0, 1.0);
 }

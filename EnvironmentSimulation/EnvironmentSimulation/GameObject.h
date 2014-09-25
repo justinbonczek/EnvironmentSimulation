@@ -23,6 +23,8 @@ public:
 	virtual void Update(float dt);
 	virtual void Draw(ID3D11DeviceContext* devCon);
 
+	virtual void SetPosition(XMFLOAT3 newPosition);
+
 	XMFLOAT4X4 const GetWorldMatrix();
 protected:
 	Mesh* mesh;

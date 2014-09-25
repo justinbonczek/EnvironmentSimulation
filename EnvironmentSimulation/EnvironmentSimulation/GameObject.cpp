@@ -59,7 +59,10 @@ void GameObject::Update(float dt)
 		0.0, 0.0, 0.0, 1.0 };
 
 	// Do the math!
-
+	//XMStoreFloat4x4(&worldMat, XMMatrixMultiply(XMLoadFloat4x4(&worldMat), XMMatrixTranslationFromVector(XMLoadFloat3(&position))));
+	worldMat._41 = position.x;
+	worldMat._42 = position.y;
+	worldMat._43 = position.z;
 }
 
 void GameObject::Draw(ID3D11DeviceContext* devCon)
@@ -79,7 +82,13 @@ void GameObject::Draw(ID3D11DeviceContext* devCon)
 		devCon->VSSetSamplers(0, 1, &sampler);
 		devCon->PSSetSamplers(0, 1, &sampler);
 	}
+	worldMat._24 = position.y;
 	devCon->DrawIndexed(mesh->numIndices, 0, 0);
+}
+
+void GameObject::SetPosition(XMFLOAT3 newPosition)
+{
+	position = newPosition;
 }
 
 XMFLOAT4X4 const GameObject::GetWorldMatrix() { return worldMat; }

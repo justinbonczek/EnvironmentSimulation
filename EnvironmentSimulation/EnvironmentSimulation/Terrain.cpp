@@ -71,6 +71,8 @@ GameObject(mat)
 Terrain::~Terrain()
 {
 	ReleaseMacro(heightmap);
+	ReleaseMacro(normalmap);
+	ReleaseMacro(terrainBuffer);
 }
 
 float Terrain::GenerateHeight(float x, float z)
@@ -82,7 +84,20 @@ void Terrain::Draw(ID3D11DeviceContext* devCon)
 {
 	devCon->VSSetShaderResources(1, 1, &heightmap);
 	devCon->VSSetShaderResources(2, 1, &normalmap);
+	devCon->VSSetConstantBuffers(1, 1, &terrainBuffer);
+	devCon->PSSetConstantBuffers(1, 1, &terrainBuffer);
+	if (animated)
+		devCon->UpdateSubresource(terrainBuffer, 0, NULL, &terrainBufferData, 0, 0);
 	GameObject::Draw(devCon);
+}
+
+void Terrain::Update(float dt)
+{
+	if (animated)
+	{
+		terrainBufferData.xOff += 0.01 * dt;
+		terrainBufferData.zOff += 0.01 * dt;
+	}
 }
 
 void Terrain::LoadNormalMap(wchar_t* filepath, ID3D11Device* dev)
@@ -92,4 +107,51 @@ void Terrain::LoadNormalMap(wchar_t* filepath, ID3D11Device* dev)
 		filepath,
 		0,
 		&normalmap);
+}
+
+void Terrain::SetBufferData(float maxHeight, ID3D11Device * dev)
+{
+	animated = false;
+
+	terrainBufferData.maxHeight = maxHeight;
+	terrainBufferData.xOff = 0;
+	terrainBufferData.zOff = 0;
+
+	D3D11_BUFFER_DESC cb;
+	ZeroMemory(&cb, sizeof(D3D11_BUFFER_DESC));
+	cb.ByteWidth = sizeof(terrainBufferData);
+	cb.Usage = D3D11_USAGE_DEFAULT;
+	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb.CPUAccessFlags = 0;
+	cb.MiscFlags = 0;
+	cb.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = &terrainBufferData;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+	HRESULT hr = dev->CreateBuffer(&cb, &initData, &terrainBuffer);
+}
+
+void Terrain::SetBufferData(float maxHeight, float xOff, float zOff, ID3D11Device* dev)
+{
+	animated = true;
+	terrainBufferData.maxHeight = maxHeight;
+	terrainBufferData.xOff = xOff;
+	terrainBufferData.zOff = zOff;
+
+	D3D11_BUFFER_DESC cb;
+	ZeroMemory(&cb, sizeof(D3D11_BUFFER_DESC));
+	cb.ByteWidth = sizeof(terrainBufferData);
+	cb.Usage = D3D11_USAGE_DEFAULT;
+	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb.CPUAccessFlags = 0;
+	cb.MiscFlags = 0;
+	cb.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = &terrainBufferData;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+	dev->CreateBuffer(&cb, &initData, &terrainBuffer);
 }

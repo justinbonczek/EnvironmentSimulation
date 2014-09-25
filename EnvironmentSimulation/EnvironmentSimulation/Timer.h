@@ -30,6 +30,9 @@ public:
 
 	// Returns the most recently calculated elapsed time (calculated in Stop(void) function)
 	static float GetElapsedTime(void);
+
+	// Returns the total time since the program began
+	static float GetTotalTime(void);
 private:
 	static std::chrono::time_point<std::chrono::system_clock> programStart;
 
