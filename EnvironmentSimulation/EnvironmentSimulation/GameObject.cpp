@@ -5,6 +5,25 @@
 #include "GameObject.h"
 #include "Game.h"
 
+GameObject::GameObject(Mesh* mesh):
+mesh(mesh)
+{
+	vBuffer = mesh->GetVertexBuffer();
+	iBuffer = mesh->GetIndexBuffer();
+
+	stride = sizeof(Vertex);
+	offset = 0;
+
+	worldMat = {
+		1.0, 0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0, 0.0,
+		0.0, 0.0, 1.0, 0.0,
+		0.0, 0.0, 0.0, 1.0 };
+	position = { 0.0, 0.0, 0.0 };
+	rotation = { 0.0, 0.0, 0.0 };
+	scale = { 1.0, 1.0, 1.0 };
+}
+
 GameObject::GameObject(Material* mat) :
 mat(mat)
 {
@@ -60,9 +79,9 @@ void GameObject::Update(float dt)
 
 	// Do the math!
 	//XMStoreFloat4x4(&worldMat, XMMatrixMultiply(XMLoadFloat4x4(&worldMat), XMMatrixTranslationFromVector(XMLoadFloat3(&position))));
-	worldMat._41 = position.x;
-	worldMat._42 = position.y;
-	worldMat._43 = position.z;
+	worldMat._11 = scale.x;
+	worldMat._22 = scale.y;
+	worldMat._33 = scale.z;
 }
 
 void GameObject::Draw(ID3D11DeviceContext* devCon)
@@ -89,6 +108,16 @@ void GameObject::Draw(ID3D11DeviceContext* devCon)
 void GameObject::SetPosition(XMFLOAT3 newPosition)
 {
 	position = newPosition;
+}
+
+void GameObject::SetSampler(ID3D11SamplerState* _sampler)
+{
+	sampler = _sampler;
+}
+
+void GameObject::SetSRV(ID3D11ShaderResourceView* _srv)
+{
+	srv = _srv;
 }
 
 XMFLOAT4X4 const GameObject::GetWorldMatrix() { return worldMat; }

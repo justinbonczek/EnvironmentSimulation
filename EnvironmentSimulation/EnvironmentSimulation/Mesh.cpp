@@ -83,6 +83,48 @@ numIndices(numIndices)
 		&indexBuffer);
 }
 
+Mesh::Mesh(MeshData& mesh, ID3D11Device* dev)
+{
+	_vertices = mesh.vertices;
+	_indices = mesh.indices;
+
+	Vertex* vertices = &mesh.vertices[0];
+	UINT*   indices  = &mesh.indices[0];
+
+	numVertices = mesh.vertices.size();
+	numIndices = mesh.indices.size();
+
+	D3D11_BUFFER_DESC vb;
+	ZeroMemory(&vb, sizeof(D3D11_BUFFER_DESC));
+	vb.Usage = D3D11_USAGE_IMMUTABLE;
+	vb.ByteWidth = sizeof(Vertex) * mesh.vertices.size();
+	vb.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vb.CPUAccessFlags = 0;
+	vb.MiscFlags = 0;
+	vb.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA initVertData;
+	initVertData.pSysMem = vertices;
+	dev->CreateBuffer(
+		&vb,
+		&initVertData,
+		&vertexBuffer);
+
+	D3D11_BUFFER_DESC ib;
+	ZeroMemory(&ib, sizeof(D3D11_BUFFER_DESC));
+	ib.Usage = D3D11_USAGE_IMMUTABLE;
+	ib.ByteWidth = sizeof(UINT) * mesh.indices.size();
+	ib.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ib.CPUAccessFlags = 0;
+	ib.MiscFlags = 0;
+	ib.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA initIndexData;
+	initIndexData.pSysMem = indices;
+	dev->CreateBuffer(
+		&ib,
+		&initIndexData,
+		&indexBuffer);
+}
+
 Mesh::~Mesh()
 {
 	ReleaseMacro(vertexBuffer);

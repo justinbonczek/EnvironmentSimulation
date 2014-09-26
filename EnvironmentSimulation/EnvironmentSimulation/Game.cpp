@@ -121,7 +121,7 @@ bool Game::InitializeDirect3D()
 	scd.OutputWindow	  = hWnd;
 	scd.Windowed		  = TRUE;
 	scd.SwapEffect		  = DXGI_SWAP_EFFECT_DISCARD;
-	scd.Flags			  = 0;
+	scd.Flags			  = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	scd.SampleDesc.Count  = 4;
 	scd.BufferDesc.RefreshRate.Numerator = 60;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
@@ -149,6 +149,7 @@ bool Game::InitializeDirect3D()
 		return false;
 	}
 
+	//swapChain->SetFullscreenState(TRUE, NULL);
 	OnResize();
 	return true;
 }

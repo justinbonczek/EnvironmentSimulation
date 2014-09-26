@@ -9,6 +9,7 @@
 #include "XColors.h"
 #include "Terrain.h"
 #include "Timer.h"
+#include "Sky.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int showCmd)
 {
@@ -38,6 +39,8 @@ Simulation::~Simulation()
 	ReleaseMacro(inputLayout);
 	ReleaseMacro(matrixBuffer);
 	ReleaseMacro(blendState);
+	ReleaseMacro(solid);
+	ReleaseMacro(wireframe)
 }
 
 bool Simulation::Initialize()
@@ -48,27 +51,13 @@ bool Simulation::Initialize()
 	LoadAssets();
 	InitializePipeline();
 
-	m_Camera.SetPosition(0.0, 5.0, -10.0);
+	m_Camera.SetPosition(0.0, 60.0, -10.0);
 	XMStoreFloat4x4(&(matrixBufferData.world), XMMatrixTranspose(XMMatrixIdentity()));
 	return true;
 }
 
 void Simulation::LoadAssets()
 {
-	ID3D11SamplerState* clampSampler;
-	D3D11_SAMPLER_DESC sd;
-	ZeroMemory(&sd, sizeof(D3D11_SAMPLER_DESC));
-	sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sd.Filter = D3D11_FILTER_ANISOTROPIC;
-	sd.MaxAnisotropy = 0;
-	sd.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sd.MinLOD = 0;
-	sd.MaxLOD = 0;
-	sd.MipLODBias = 0;
-	dev->CreateSamplerState(&sd, &clampSampler);
-
 	ID3D11SamplerState* wrapSampler;
 	D3D11_SAMPLER_DESC wsd;
 	ZeroMemory(&wsd, sizeof(D3D11_SAMPLER_DESC));
@@ -82,21 +71,22 @@ void Simulation::LoadAssets()
 	wsd.MaxLOD = 0;
 	wsd.MipLODBias = 0;
 	dev->CreateSamplerState(&wsd, &wrapSampler);
-	
-	Material* diffuse = new Material(L"Textures/default.png", wrapSampler, dev);
-	diffuse->LoadShader(L"DefaultVert.cso", Vert, dev);
-	diffuse->LoadShader(L"DefaultPixel.cso", Pixel, dev);
 
-	Material* heightmap = new Material(L"Textures/default.png", wrapSampler, dev);
+	Material* heightmap = new Material(L"Textures/grass.png", wrapSampler, dev);
 	heightmap->LoadShader(L"Heightmap.cso", Vert, dev);
 	heightmap->LoadShader(L"TexturedDiffuse.cso", Pixel, dev);
 
 	Material* waterMat = new Material(L"Textures/water.png", wrapSampler, dev);
-	waterMat->LoadShader(L"Heightmap.cso", Vert, dev);
-	waterMat->LoadShader(L"TexturedDiffuse.cso", Pixel, dev);
+	waterMat->LoadShader(L"WaterVertex.cso", Vert, dev);
+	waterMat->LoadShader(L"WaterPixel.cso", Pixel, dev);
 
-	GameObject* obj = new GameObject(new Mesh("Models/chess.fbx", dev), diffuse);
-	//objects.push_back(obj);
+	MeshData skySphere;
+	MeshGenerator::CreateSphere(1000.0, 2, skySphere);
+	Mesh* skySphereMesh = new Mesh(skySphere, dev);
+	Sky* sky = new Sky(skySphereMesh, dev);
+	sky->LoadCubeMap(L"Textures/grasscube.dds", dev);
+	sky->SetMaterial(L"SkyVertex.cso", L"SkyPixel.cso", wrapSampler, dev);
+	objects.push_back(sky);
 
 	Terrain* terrain = new Terrain(500.0f, 500.0f, 500, 500, heightmap, L"Textures/heightmap.png", dev);
 	terrain->LoadNormalMap(L"Textures/normalmap2.png", dev);
@@ -152,6 +142,41 @@ void Simulation::InitializePipeline()
 	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	dev->CreateBlendState(&bd, &blendState);
+
+	D3D11_RASTERIZER_DESC rd;
+	ZeroMemory(&rd, sizeof(D3D11_RASTERIZER_DESC));
+	rd.FillMode = D3D11_FILL_WIREFRAME;
+	rd.CullMode = D3D11_CULL_BACK;
+	rd.FrontCounterClockwise = false;
+	rd.DepthBias = 0;
+	rd.DepthBiasClamp = 0;
+	rd.SlopeScaledDepthBias = 0;
+	rd.DepthClipEnable = true;
+	rd.ScissorEnable = false;
+	rd.MultisampleEnable = false;
+	rd.AntialiasedLineEnable = false;
+	dev->CreateRasterizerState(&rd, &wireframe);
+
+	rd.FillMode = D3D11_FILL_SOLID;
+	dev->CreateRasterizerState(&rd, &solid);
+
+	D3D11_DEPTH_STENCIL_DESC dsd;
+	ZeroMemory(&dsd, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dsd.DepthEnable = true;
+	dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	dsd.StencilEnable = false;
+	dsd.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	dsd.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dsd.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dsd.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsd.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dsd.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dev->CreateDepthStencilState(&dsd, &depthStencilState);
 }
 
 void Simulation::OnResize()
@@ -164,6 +189,22 @@ void Simulation::OnResize()
 
 void Simulation::Update(float dt)
 {
+	time += dt;
+	if (GetAsyncKeyState(VK_SPACE) && 0x8000 && time > 0.25)
+	{
+		if (current == solid)
+		{
+			current = wireframe;
+			time = 0;
+		}
+		else
+		{
+			current = solid;
+			time = 0;
+		}
+		if (time > 100)
+			time -= 100;
+	}
 	MoveCamera(dt);
 
 	for (GameObject* obj : objects)
@@ -189,9 +230,11 @@ void Simulation::Draw()
 	devCon->IASetInputLayout(inputLayout);
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devCon->VSSetConstantBuffers(0, 1, &matrixBuffer);
-	
+	devCon->OMSetDepthStencilState(depthStencilState, 0);
+
 	for (GameObject* obj : objects)
 	{
+		devCon->RSSetState(current);
 		XMStoreFloat4x4(&(matrixBufferData.world), XMLoadFloat4x4(&(obj->GetWorldMatrix())));
 		devCon->UpdateSubresource(matrixBuffer, 0, NULL, &matrixBufferData, 0, 0);
 		obj->Draw(devCon);

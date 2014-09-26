@@ -28,6 +28,7 @@ public:
 private:
 	ID3D11ShaderResourceView* heightmap;
 	ID3D11ShaderResourceView* normalmap;
+
 	ID3D11Buffer* terrainBuffer;
 
 	BufferData terrainBufferData;

@@ -36,7 +36,7 @@ SamplerState displacementSampler : register(s0);
 VertexToPixel main(VertexShaderInput input)
 {
 	VertexToPixel output;
-
+	
 	matrix worldViewProj = mul(mul(world, view), projection);
 
 	//input.position.y = sin(input.position.x) * 2.0f * cos(input.position.z) * 2.0f;

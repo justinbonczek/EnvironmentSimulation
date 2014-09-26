@@ -9,6 +9,7 @@ using namespace DirectX;
 class Material
 {
 public:
+	Material(wchar_t* vertfilepath, wchar_t* pixelfilepath, ID3D11SamplerState* _sampler, ID3D11Device* dev);
 	Material(wchar_t* filepath, ID3D11SamplerState* sampler, ID3D11Device* dev);
 	virtual ~Material();
 

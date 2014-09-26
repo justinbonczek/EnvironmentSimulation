@@ -1,5 +1,6 @@
 #include "Material.h"
 #include <WICTextureLoader.h>
+#include <DDSTextureLoader.h>
 #include "Game.h"
 
 Material::Material(wchar_t* filepath, ID3D11SamplerState* sampler, ID3D11Device* dev) :
@@ -11,6 +12,14 @@ sampler(sampler)
 		0,
 		&srv);
 	m_Shader = new Shader();
+}
+
+Material::Material(wchar_t* vertfilepath, wchar_t* pixelfilepath, ID3D11SamplerState* _sampler, ID3D11Device* dev)
+{
+	m_Shader = new Shader();
+	m_Shader->LoadShader(vertfilepath, Vert, dev);
+	m_Shader->LoadShader(pixelfilepath, Pixel, dev);
+	sampler = _sampler;
 }
 
 Material::~Material()

@@ -1,7 +1,10 @@
 #include "Camera.h"
+#include <DDSTextureLoader.h>
 
 Camera::Camera():
-m_View()
+m_View(),
+offset(0),
+stride(sizeof(Vertex))
 {
 	XMVECTOR position = XMVectorSet(0, 0, -5, 0);
 	XMVECTOR target = XMVectorSet(0, 0, 0, 0);

@@ -16,6 +16,7 @@ using namespace DirectX;
 class GameObject
 {
 public:
+	GameObject(Mesh* mesh);
 	GameObject(Material* mat);
 	GameObject(Mesh* mesh, Material* mat);
 	virtual ~GameObject();
@@ -24,6 +25,9 @@ public:
 	virtual void Draw(ID3D11DeviceContext* devCon);
 
 	virtual void SetPosition(XMFLOAT3 newPosition);
+
+	void SetSampler(ID3D11SamplerState* _sampler);
+	void SetSRV(ID3D11ShaderResourceView* srv);
 
 	XMFLOAT4X4 const GetWorldMatrix();
 protected:

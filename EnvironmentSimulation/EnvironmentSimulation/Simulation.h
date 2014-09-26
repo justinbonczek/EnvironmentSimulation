@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "MeshGenerator.h"
 
 struct MatrixBufferData
 {
@@ -46,6 +47,12 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11Buffer* matrixBuffer;
 	ID3D11BlendState* blendState;
+	ID3D11DepthStencilState* depthStencilState;
+
+	ID3D11RasterizerState* solid;
+	ID3D11RasterizerState* wireframe;
+	ID3D11RasterizerState* current;
+	float time;
 
 	std::vector<GameObject*> objects;
 };
