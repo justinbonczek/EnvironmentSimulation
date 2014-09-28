@@ -1,15 +1,32 @@
-﻿Build started 9/26/2014 2:35:18 PM.
+﻿Build started 9/28/2014 12:00:26 PM.
      1>Project "C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\EnvironmentSimulation.vcxproj" on node 2 (Build target(s)).
      1>FxCompile:
          C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_4_0 /Fo "C:\Dev\Projects\EnvironmentSimulation\Debug\Heightmap.cso" /Od /Zi Heightmap.hlsl 
-     1>C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\Heightmap.hlsl(49,9-107): warning X3206: implicit truncation of vector type
-     1>C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\Heightmap.hlsl(36,18-43): warning X3578: Output value 'main' is not completely initialized
+     1>C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\Heightmap.hlsl(76,9-79): warning X3206: implicit truncation of vector type
+     1>C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\Heightmap.hlsl(40,18-43): warning X3578: Output value 'main' is not completely initialized
          
          compilation object save succeeded; see C:\Dev\Projects\EnvironmentSimulation\Debug\Heightmap.cso
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Simulation.cpp
+         Simulation.cpp
+     1>c:\dev\projects\environmentsimulation\environmentsimulation\simulation.cpp(91): warning C4316: 'Terrain' : object allocated on the heap may not be aligned 16
+     1>c:\dev\projects\environmentsimulation\environmentsimulation\simulation.cpp(97): warning C4316: 'Terrain' : object allocated on the heap may not be aligned 16
        Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Dev\Projects\EnvironmentSimulation\Debug\EnvironmentSimulation.exe" /INCREMENTAL /NOLOGO d3d11.lib d3dcompiler.lib assimpd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Dev\Projects\EnvironmentSimulation\Debug\EnvironmentSimulation.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Dev\Projects\EnvironmentSimulation\Debug\EnvironmentSimulation.lib" /MACHINE:X86 Debug\MeshGenerator.obj
+         Debug\Sky.obj
+         Debug\Terrain.obj
+         Debug\Camera.obj
+         Debug\Game.obj
+         Debug\GameObject.obj
+         Debug\Material.obj
+         Debug\Mesh.obj
+         Debug\Shader.obj
+         Debug\Simulation.obj
+         Debug\Timer.obj
+         C:\Dev\Projects\EnvironmentSimulation\DirectXTK\Bin\Windows81\Win32\Debug\DirectXTK.lib
          EnvironmentSimulation.vcxproj -> C:\Dev\Projects\EnvironmentSimulation\Debug\EnvironmentSimulation.exe
      1>Done Building Project "C:\Dev\Projects\EnvironmentSimulation\EnvironmentSimulation\EnvironmentSimulation.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.56
+Time Elapsed 00:00:04.96

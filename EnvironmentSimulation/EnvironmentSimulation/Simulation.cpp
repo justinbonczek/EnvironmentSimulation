@@ -64,7 +64,7 @@ void Simulation::LoadAssets()
 	wsd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	wsd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	wsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	wsd.Filter = D3D11_FILTER_ANISOTROPIC;
+	wsd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	wsd.MaxAnisotropy = 0;
 	wsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	wsd.MinLOD = 0;
@@ -91,6 +91,7 @@ void Simulation::LoadAssets()
 	Terrain* terrain = new Terrain(500.0f, 500.0f, 500, 500, heightmap, L"Textures/heightmap.png", dev);
 	terrain->LoadNormalMap(L"Textures/normalmap2.png", dev);
 	terrain->SetBufferData(100.0, dev);
+	terrain->SetTextures(L"Textures/sand.png", L"Textures/grass.png", L"Textures/cliff.png",dev);
 	objects.push_back(terrain);
 
 	Terrain* water = new Terrain(500.0f, 500.0f, 500, 500, waterMat, L"Textures/waterHeightMap.png", dev);

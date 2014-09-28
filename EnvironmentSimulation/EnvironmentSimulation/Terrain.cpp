@@ -84,6 +84,11 @@ void Terrain::Draw(ID3D11DeviceContext* devCon)
 {
 	devCon->VSSetShaderResources(1, 1, &heightmap);
 	devCon->VSSetShaderResources(2, 1, &normalmap);
+
+	devCon->VSSetShaderResources(3, 1, &bottomTex);
+	devCon->VSSetShaderResources(4, 1, &middleTex);
+	devCon->VSSetShaderResources(5, 1, &topTex);
+
 	devCon->VSSetConstantBuffers(1, 1, &terrainBuffer);
 	devCon->PSSetConstantBuffers(1, 1, &terrainBuffer);
 	if (animated)
@@ -154,4 +159,11 @@ void Terrain::SetBufferData(float maxHeight, float xOff, float zOff, ID3D11Devic
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 	dev->CreateBuffer(&cb, &initData, &terrainBuffer);
+}
+
+void Terrain::SetTextures(wchar_t* botFilePath, wchar_t* midFilePath, wchar_t* topFilePath, ID3D11Device* dev)
+{
+	CreateWICTextureFromFile(dev, botFilePath, NULL, &bottomTex);
+	CreateWICTextureFromFile(dev, midFilePath, NULL, &middleTex);
+	CreateWICTextureFromFile(dev, topFilePath, NULL, &topTex);
 }
