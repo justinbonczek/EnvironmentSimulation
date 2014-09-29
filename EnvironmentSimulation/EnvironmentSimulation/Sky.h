@@ -1,3 +1,8 @@
+//
+// A class for rendering skyboxes
+// Justin Bonczek
+//
+
 #ifndef SKY_H
 #define SKY_H
 

@@ -1,3 +1,8 @@
+//
+// Material wrapper class for holding texture and shader information
+// Justin Bonczek
+//
+
 #ifndef MATERIAL_H
 #define MATERIAL_H
 

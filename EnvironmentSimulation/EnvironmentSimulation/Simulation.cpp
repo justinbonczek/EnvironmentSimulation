@@ -84,7 +84,7 @@ void Simulation::LoadAssets()
 	MeshGenerator::CreateSphere(1000.0, 2, skySphere);
 	Mesh* skySphereMesh = new Mesh(skySphere, dev);
 	Sky* sky = new Sky(skySphereMesh, dev);
-	sky->LoadCubeMap(L"Textures/grasscube.dds", dev);
+	sky->LoadCubeMap(L"Textures/oceansky.dds", dev);
 	sky->SetMaterial(L"SkyVertex.cso", L"SkyPixel.cso", wrapSampler, dev);
 	objects.push_back(sky);
 

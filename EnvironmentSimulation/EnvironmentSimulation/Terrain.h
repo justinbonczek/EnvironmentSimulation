@@ -1,3 +1,9 @@
+//
+// A class which generates a basic terrain from a grayscale heightmap
+// Justin Bonczek
+//
+
+
 #ifndef TERRAIN_H
 #define TERRAIN_h
 

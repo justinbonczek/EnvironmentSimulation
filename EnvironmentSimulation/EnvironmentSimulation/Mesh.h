@@ -1,3 +1,9 @@
+//
+// A wrapper class for holding vertex and index data 
+// Can also be used for loading meshes from a file
+// Justin Bonczek
+//
+
 #ifndef MESH_H
 #define MESH_H
 

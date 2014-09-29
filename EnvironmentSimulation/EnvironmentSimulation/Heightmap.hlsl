@@ -43,8 +43,7 @@ VertexToPixel main(VertexShaderInput input)
 	
 	matrix worldViewProj = mul(mul(world, view), projection);
 
-	//input.position.y = sin(input.position.x) * 2.0f * cos(input.position.z) * 2.0f;
-	input.position.y = _heightmap.SampleLevel(displacementSampler, float2(input.uv.x + xOff, input.uv.y + zOff), 0).x * maxHeight;
+	input.position.y = _heightmap.SampleLevel(displacementSampler, float2(input.uv.x, input.uv.y), 0).x * maxHeight;
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
 
 	
